@@ -96,8 +96,9 @@ public void registrarVenta(Venta venta) throws Exception {
         ps.executeUpdate();
     } finally {
         if (ps != null) ps.close();
+ 
     }
-}
 
-
+    }
+    
 }

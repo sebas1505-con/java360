@@ -29,40 +29,38 @@ public class LoginBean implements Serializable {
     public Usuario getUsuarioLogueado() { return usuarioLogueado; }
 
     // ------------------ INICIAR SESIÓN ------------------
-    // ------------------ INICIAR SESIÓN ------------------
-public String iniciarSesion() {
-    try {
-        LoginDAO loginDao = new LoginDAO();
-        usuarioLogueado = loginDao.login(correo, clave);
+    public String iniciarSesion() {
+        try {
+            LoginDAO loginDao = new LoginDAO();
+            usuarioLogueado = loginDao.login(correo, clave);
 
-        if (usuarioLogueado != null) {
-            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                    .getExternalContext().getSession(true);
-            session.setAttribute("usuario", usuarioLogueado);
+            if (usuarioLogueado != null) {
+                HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                        .getExternalContext().getSession(true);
+                session.setAttribute("usuario", usuarioLogueado);
 
-            // Redirigir según rol
-            if ("admin".equalsIgnoreCase(usuarioLogueado.getRol())) {
-                return "admin?faces-redirect=true";
-            } else if ("usuario.".equalsIgnoreCase(usuarioLogueado.getRol())) {
-                return "usuario.?faces-redirect=true";
-            } else if ("repartidor".equalsIgnoreCase(usuarioLogueado.getRol())) {
-                return "Repartidor?faces-redirect=true";
+                // Redirigir según rol
+                if ("admin".equalsIgnoreCase(usuarioLogueado.getRol())) {
+                    return "admin?faces-redirect=true";
+                } else if ("usuario".equalsIgnoreCase(usuarioLogueado.getRol())) {
+                    return "usuario?faces-redirect=true";
+                } else if ("repartidor".equalsIgnoreCase(usuarioLogueado.getRol())) {
+                    return "repartidor?faces-redirect=true";
+                }
             }
+
+            // Si no encontró nada
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Datos incorrectos"));
+            return "login";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error", "Problema al iniciar sesión"));
+            return "login";
         }
-
-        // Si no encontró nada
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Datos incorrectos"));
-        return "login";
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error", "Problema al iniciar sesión"));
-        return "login";
     }
-}
-
 
     // ------------------ CERRAR SESIÓN ------------------
     public String cerrarSesion() {
@@ -79,7 +77,7 @@ public String iniciarSesion() {
         FacesContext context = FacesContext.getCurrentInstance();
         Usuario usuario = (Usuario) context.getExternalContext().getSessionMap().get("usuario");
 
-        if (usuario == null || "admin".equalsIgnoreCase(usuario.getRol())) {
+        if (usuario == null || !"usuario".equalsIgnoreCase(usuario.getRol())) {
             try {
                 context.getExternalContext().redirect(
                     context.getExternalContext().getRequestContextPath() + "/sinacceso.xhtml"
@@ -104,4 +102,20 @@ public String iniciarSesion() {
             }
         }
     }
+
+    public void verifSesionRepartidor() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Usuario usuario = (Usuario) context.getExternalContext().getSessionMap().get("usuario");
+
+        if (usuario == null || !"repartidor".equalsIgnoreCase(usuario.getRol())) {
+            try {
+                context.getExternalContext().redirect(
+                    context.getExternalContext().getRequestContextPath() + "/sinacceso.xhtml"
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
+

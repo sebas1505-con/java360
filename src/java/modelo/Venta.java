@@ -15,6 +15,9 @@ public class Venta {
     private String telefonoContacto;
     private String observaciones;
 
+    // Relación con Cliente
+    private Cliente cliente;
+
     // --- GETTERS & SETTERS ---
     public int getIdVenta() { return idVenta; }
     public void setIdVenta(int idVenta) { this.idVenta = idVenta; }
@@ -48,5 +51,13 @@ public class Venta {
 
     public String getObservaciones() { return observaciones; }
     public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
+
+    // --- Cliente asociado ---
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
+
+    public void setId(int id) {
+    this.idVenta = id;
+}
 
 }

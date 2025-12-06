@@ -16,6 +16,7 @@ public class LoginDAO {
     public Usuario login(String correo, String clave) {
         Usuario u = null;
         try {
+            // Normalizar entrada
             String c = correo == null ? "" : correo.trim().toLowerCase();
             String k = clave == null ? "" : clave.trim();
 
@@ -33,54 +34,54 @@ public class LoginDAO {
                 u.setNombre(rs.getString("nombre"));
                 u.setUsuCorreo(rs.getString("usuCorreo"));
                 u.setUsuario(rs.getString("usuario"));
-                u.setClave(rs.getString("clave"));
+                u.setClave(rs.getString("clave")); // columna correcta
                 u.setUsuTelefono(rs.getString("usutelefono"));
                 u.setDireccion(rs.getString("direccion"));
                 u.setFechaNacimiento(rs.getDate("fechaNacimiento"));
                 u.setBarrio(rs.getString("barrio"));
-                u.setRol(rs.getString("rol"));
+                u.setRol(rs.getString("rol")); // normalmente 'cliente'
                 return u;
             }
 
-            // 2) Buscar en tabla administrador (usa 'contraseña' con ñ, escapada con backticks)
+            // 2) Buscar en tabla administrador
             ps = con.prepareStatement(
-                "SELECT pk_idAdministrador, admCorreo, usuario, `contraseña`, telefono, codigo " +
-                "FROM administrador WHERE LOWER(admCorreo)=? AND `contraseña`=?"
+                "SELECT pk_idAdministrador, admCorreo, usuario, contraseña, telefono, codigo, rol " +
+                "FROM administrador WHERE LOWER(admCorreo)=? AND contraseña=?"
             );
             ps.setString(1, c);
             ps.setString(2, k);
             rs = ps.executeQuery();
             if (rs.next()) {
-                u = new Usuario();
+                u = new Usuario(); // reutilizamos el modelo Usuario
                 u.setId(rs.getInt("pk_idAdministrador"));
                 u.setUsuCorreo(rs.getString("admCorreo"));
                 u.setUsuario(rs.getString("usuario"));
-                u.setClave(rs.getString("contraseña")); // aquí con ñ
+                u.setClave(rs.getString("contraseña")); // columna correcta
                 u.setUsuTelefono(rs.getString("telefono"));
-                u.setBarrio(rs.getString("codigo"));
-                u.setRol("admin");
+                u.setBarrio(rs.getString("codigo")); // opcional
+                u.setRol(rs.getString("rol")); // rol viene de la tabla
                 return u;
             }
 
-            // 3) Buscar en tabla repartidor (usa 'contrasena' sin ñ)
+            // 3) Buscar en tabla repartidor
             ps = con.prepareStatement(
-                "SELECT pk_idRepartidor, NombreRepar, Correo, Usuario, contrasena, repTelefono, tipodevehi, numplaca, rol " +
-                "FROM repartidor WHERE LOWER(Correo)=? AND contrasena=?"
+                "SELECT pk_idRepartidor, NombreRepar, Correo, Usuario, contrsena, repTelefono, tipodevehi, numplaca, rol " +
+                "FROM repartidor WHERE LOWER(Correo)=? AND contrsena=?"
             );
             ps.setString(1, c);
             ps.setString(2, k);
             rs = ps.executeQuery();
             if (rs.next()) {
-                u = new Usuario();
+                u = new Usuario(); // reutilizamos el modelo Usuario
                 u.setId(rs.getInt("pk_idRepartidor"));
                 u.setNombre(rs.getString("NombreRepar"));
                 u.setUsuCorreo(rs.getString("Correo"));
                 u.setUsuario(rs.getString("Usuario"));
-                u.setClave(rs.getString("contrasena")); // aquí sin ñ
+                u.setClave(rs.getString("contrasena")); // columna correcta
                 u.setUsuTelefono(rs.getString("repTelefono"));
-                u.setDireccion(rs.getString("tipodevehi"));
-                u.setBarrio(rs.getString("numplaca"));
-                u.setRol(rs.getString("rol"));
+                u.setDireccion(rs.getString("tipodevehi")); // opcional
+                u.setBarrio(rs.getString("numplaca"));      // opcional
+                u.setRol(rs.getString("rol")); // aquí será 'repartidor'
                 return u;
             }
 
