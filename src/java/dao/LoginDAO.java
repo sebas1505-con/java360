@@ -65,22 +65,22 @@ public class LoginDAO {
 
             // 3) Buscar en tabla repartidor
             ps = con.prepareStatement(
-                "SELECT pk_idRepartidor, NombreRepar, Correo, Usuario, contrsena, repTelefono, tipodevehi, numplaca, rol " +
-                "FROM repartidor WHERE LOWER(Correo)=? AND contrsena=?"
+                "SELECT pk_idRepartidor, NombreRepar, Correo, Usuario, contrasena, repTelefono, tipodevehi, numplaca, rol " +
+                "FROM repartidor WHERE LOWER(Correo)=? AND contrasena=?"
             );
             ps.setString(1, c);
             ps.setString(2, k);
             rs = ps.executeQuery();
             if (rs.next()) {
-                u = new Usuario(); // reutilizamos el modelo Usuario
+                u = new Usuario(); 
                 u.setId(rs.getInt("pk_idRepartidor"));
                 u.setNombre(rs.getString("NombreRepar"));
                 u.setUsuCorreo(rs.getString("Correo"));
                 u.setUsuario(rs.getString("Usuario"));
                 u.setClave(rs.getString("contrasena")); // columna correcta
                 u.setUsuTelefono(rs.getString("repTelefono"));
-                u.setDireccion(rs.getString("tipodevehi")); // opcional
-                u.setBarrio(rs.getString("numplaca"));      // opcional
+                u.setDireccion(rs.getString("tipodevehi"));
+                u.setBarrio(rs.getString("numplaca"));   
                 u.setRol(rs.getString("rol")); // aquí será 'repartidor'
                 return u;
             }

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import modelo.Cliente;
 import modelo.Repartidor;
 import modelo.Venta;
 
@@ -33,7 +34,7 @@ public class RepartidorDAO {
             ps.setString(5, r.getCorreo());
             ps.setString(6, r.getUsuario());
             ps.setString(7, r.getContrasena());
-            ps.setString(8, "repartidor"); // siempre guardamos rol repartidor
+            ps.setString(8, "repartidor"); 
             ps.executeUpdate();
         } finally {
             if (ps != null) ps.close();
@@ -71,7 +72,7 @@ public class RepartidorDAO {
     }
     
     public Repartidor validarRepartidor(String usuario, String contrasena) throws Exception {
-    String sql = "SELECT * FROM repartidor WHERE Usuario=? AND contrsena=?";
+    String sql = "SELECT * FROM repartidor WHERE Usuario=? AND contrasena=?"; // usa el nombre real
     PreparedStatement ps = con.prepareStatement(sql);
     ps.setString(1, usuario);
     ps.setString(2, contrasena);
@@ -80,17 +81,18 @@ public class RepartidorDAO {
         Repartidor r = new Repartidor();
         r.setIdRepartidor(rs.getInt("pk_idRepartidor"));
         r.setUsuario(rs.getString("Usuario"));
-        r.setContrasena(rs.getString("contrsena")); // nombre real de la columna
+        r.setContrasena(rs.getString("contrasena")); // columna correcta
         r.setRol(rs.getString("rol"));
         return r;
     }
     return null;
+
 }
 public List<Venta> listarPedidosPendientes() throws Exception {
     List<Venta> lista = new ArrayList<>();
-    String sql = "SELECT v.id, c.nombre, c.direccion, c.telefono " +
+    String sql = "SELECT v.idVenta, c.nombre, c.direccion, c.telefono " +
                  "FROM venta v " +
-                 "JOIN cliente c ON v.cliente_id = c.id " +
+                 "JOIN cliente c ON v.cliente_id = c.idCliente " +
                  "WHERE v.estado = 'PENDIENTE'";
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -99,10 +101,14 @@ public List<Venta> listarPedidosPendientes() throws Exception {
         rs = ps.executeQuery();
         while (rs.next()) {
             Venta v = new Venta();
-            v.setId(rs.getInt("id"));
-            v.getCliente().setNombre(rs.getString("nombre"));
-            v.getCliente().setDireccion(rs.getString("direccion"));
-            v.getCliente().setTelefono(rs.getString("telefono"));
+            v.setIdVenta(rs.getInt("idVenta")); // usa el nombre real de la columna
+
+            Cliente c = new Cliente();
+            c.setNombre(rs.getString("nombre"));
+            c.setDireccion(rs.getString("direccion"));
+            c.setTelefono(rs.getString("telefono"));
+            v.setCliente(c);
+
             lista.add(v);
         }
     } finally {
@@ -111,6 +117,8 @@ public List<Venta> listarPedidosPendientes() throws Exception {
     }
     return lista;
 }
+
+
 public void asignarPedido(String usuarioRepartidor, int idVenta) throws Exception {
     String sql = "UPDATE venta SET repartidor=?, estado='ASIGNADO' WHERE id=?";
     PreparedStatement ps = null;

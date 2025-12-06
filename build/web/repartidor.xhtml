@@ -10,6 +10,8 @@
     <h:outputStylesheet library="css" name="repartidor.css"/>
 </h:head>
 <h:body>
+    <f:event type="preRenderView" listener="#{loginBean.verifSesionRepartidor}" />
+
     <link rel="icon" type="image/png" href="#{resource['images/repar.png']}" />
     <div class="header">
         <h1>Panel del Repartidor</h1>
@@ -18,7 +20,7 @@
     <div class="container">
         <div class="card">
             <nav>
-                <h:link outcome="usuario" value="Inicio" styleClass="btn" />
+                <h:link outcome="repartidor" value="Inicio" styleClass="btn" />
                 <h:link outcome="pedidos" value="Pedidos Pendientes" styleClass="btn" />
                 <a class="btn" href="#">Historial de Entregas</a>
 

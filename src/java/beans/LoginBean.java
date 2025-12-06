@@ -39,14 +39,16 @@ public class LoginBean implements Serializable {
                         .getExternalContext().getSession(true);
                 session.setAttribute("usuario", usuarioLogueado);
 
-                // Redirigir según rol
+                
                 if ("admin".equalsIgnoreCase(usuarioLogueado.getRol())) {
-                    return "admin?faces-redirect=true";
-                } else if ("usuario".equalsIgnoreCase(usuarioLogueado.getRol())) {
-                    return "usuario?faces-redirect=true";
-                } else if ("repartidor".equalsIgnoreCase(usuarioLogueado.getRol())) {
-                    return "repartidor?faces-redirect=true";
-                }
+    return "admin?faces-redirect=true";
+} else if ("usuario".equalsIgnoreCase(usuarioLogueado.getRol()) 
+        || "cliente".equalsIgnoreCase(usuarioLogueado.getRol())) {
+    return "usuario?faces-redirect=true";
+} else if ("repartidor".equalsIgnoreCase(usuarioLogueado.getRol())) {
+    return "repartidor?faces-redirect=true";
+}
+
             }
 
             // Si no encontró nada
@@ -62,7 +64,6 @@ public class LoginBean implements Serializable {
         }
     }
 
-    // ------------------ CERRAR SESIÓN ------------------
     public String cerrarSesion() {
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(false);
@@ -77,7 +78,7 @@ public class LoginBean implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         Usuario usuario = (Usuario) context.getExternalContext().getSessionMap().get("usuario");
 
-        if (usuario == null || !"usuario".equalsIgnoreCase(usuario.getRol())) {
+        if (usuario == null || !"cliente".equalsIgnoreCase(usuario.getRol())) {
             try {
                 context.getExternalContext().redirect(
                     context.getExternalContext().getRequestContextPath() + "/sinacceso.xhtml"
@@ -104,18 +105,23 @@ public class LoginBean implements Serializable {
     }
 
     public void verifSesionRepartidor() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        Usuario usuario = (Usuario) context.getExternalContext().getSessionMap().get("usuario");
+    FacesContext context = FacesContext.getCurrentInstance();
+    Usuario usuario = (Usuario) context.getExternalContext().getSessionMap().get("usuario");
 
-        if (usuario == null || !"repartidor".equalsIgnoreCase(usuario.getRol())) {
-            try {
-                context.getExternalContext().redirect(
-                    context.getExternalContext().getRequestContextPath() + "/sinacceso.xhtml"
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    if (usuario != null) {
+        System.out.println("ROL en sesión: [" + usuario.getRol() + "]");
+    }
+
+    if (usuario == null || !"repartidor".equalsIgnoreCase(usuario.getRol().trim())) {
+        try {
+            context.getExternalContext().redirect(
+                context.getExternalContext().getRequestContextPath() + "/sinacceso.xhtml"
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+}
+
 }
 
