@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+<h:head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="#{resource['images/usu.png']}" />
+    <h:outputStylesheet library="css" name="confirmacion.css" />
+    <title>Deportes 360</title>
+</h:head>
+
+<h:body>
+    <div class="confirmacion-container">
+        <h2>✅ Compra registrada con éxito</h2>
+
+        <h:panelGrid columns="2" styleClass="confirmacion-grid">
+            <h:outputText value="Cantidad:" />
+            <h:outputText value="#{ventaBean.cantProducto}" />
+
+            <h:outputText value="Método de envío:" />
+            <h:outputText value="#{ventaBean.metodoEnvio}" />
+
+            <h:outputText value="Dirección:" />
+            <h:outputText value="#{ventaBean.direccionEnvio}" />
+
+            <h:outputText value="Teléfono:" />
+            <h:outputText value="#{ventaBean.telefonoContacto}" />
+
+            <h:outputText value="Método de pago:" />
+            <h:outputText value="#{ventaBean.metodoPago}" />
+
+            <h:outputText value="Total:" />
+            <h:outputText value="#{ventaBean.totalVenta}" />
+
+            <h:outputText value="Observaciones:" />
+            <h:outputText value="#{ventaBean.observaciones}" />
+        </h:panelGrid>
+
+        <!-- Botón para volver a la vista usuario -->
+        <h:form>
+            <h:commandButton value="⬅ Volver a Usuario"
+                             action="/usuario.xhtml?faces-redirect=true"
+                             styleClass="btn-volver"/>
+        </h:form>
+    </div>
+</h:body>
+</html>

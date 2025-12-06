@@ -1,0 +1,59 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import modelo.Repartidor;
+
+public class RepartidorDAO {
+    private Connection con;
+
+    public RepartidorDAO() {
+        try {
+            con = Conexion.conectar();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void registrarRepartidor(Repartidor r) throws Exception {
+    String sql = "INSERT INTO repartidor (repTelefono, tipodevehi, numplaca, NombreRepar, Correo, Usuario, contrasena, rol) "
+               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    PreparedStatement ps = con.prepareStatement(sql);
+    ps.setString(1, r.getRepTelefono());
+    ps.setString(2, r.getTipoDeVehi());
+    ps.setString(3, r.getNumPlaca());
+    ps.setString(4, r.getNombreRepar());
+    ps.setString(5, r.getCorreo());
+    ps.setString(6, r.getUsuario());
+    ps.setString(7, r.getContrasena());
+    ps.setString(8, "repartidor"); // siempre guardamos rol repartidor
+    ps.executeUpdate();
+}
+
+
+    // Listar repartidores
+    public List<Repartidor> listarRepartidores() throws Exception {
+        List<Repartidor> lista = new ArrayList<>();
+        String sql = "SELECT * FROM repartidor";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Repartidor r = new Repartidor();
+            r.setIdRepartidor(rs.getInt("pk_idRepartidor"));
+            r.setRepTelefono(rs.getString("repTelefono"));
+            r.setIdUsuario(rs.getInt("fk_id_usuario"));
+            r.setTipoDeVehi(rs.getString("tipodevehi"));
+            r.setNumPlaca(rs.getString("numplaca"));
+            r.setNombreRepar(rs.getString("NombreRepar"));
+            r.setCorreo(rs.getString("Correo"));
+            r.setUsuario(rs.getString("Usuario"));
+            r.setContrasena(rs.getString("contrasena"));
+            lista.add(r);
+        }
+        return lista;
+    }
+}

@@ -16,7 +16,6 @@ public class LoginDAO {
     public Usuario login(String correo, String clave) {
         Usuario u = null;
         try {
-            // Normalizar entrada
             String c = correo == null ? "" : correo.trim().toLowerCase();
             String k = clave == null ? "" : clave.trim();
 
@@ -39,27 +38,49 @@ public class LoginDAO {
                 u.setDireccion(rs.getString("direccion"));
                 u.setFechaNacimiento(rs.getDate("fechaNacimiento"));
                 u.setBarrio(rs.getString("barrio"));
-                u.setRol(rs.getString("rol")); // normalmente 'cliente'
+                u.setRol(rs.getString("rol"));
                 return u;
             }
 
-            // 2) Buscar en tabla administrador
+            // 2) Buscar en tabla administrador (usa 'contraseña' con ñ, escapada con backticks)
             ps = con.prepareStatement(
-                "SELECT pk_idAdministrador, admCorreo, usuario, contraseña, telefono, codigo " +
-                "FROM administrador WHERE LOWER(admCorreo)=? AND contraseña=?"
+                "SELECT pk_idAdministrador, admCorreo, usuario, `contraseña`, telefono, codigo " +
+                "FROM administrador WHERE LOWER(admCorreo)=? AND `contraseña`=?"
             );
             ps.setString(1, c);
             ps.setString(2, k);
             rs = ps.executeQuery();
             if (rs.next()) {
-                u = new Usuario(); // reutilizamos el modelo Usuario
+                u = new Usuario();
                 u.setId(rs.getInt("pk_idAdministrador"));
                 u.setUsuCorreo(rs.getString("admCorreo"));
                 u.setUsuario(rs.getString("usuario"));
-                u.setClave(rs.getString("contraseña"));
+                u.setClave(rs.getString("contraseña")); // aquí con ñ
                 u.setUsuTelefono(rs.getString("telefono"));
-                u.setBarrio(rs.getString("codigo")); // opcional
-                u.setRol("admin"); // forzamos rol admin
+                u.setBarrio(rs.getString("codigo"));
+                u.setRol("admin");
+                return u;
+            }
+
+            // 3) Buscar en tabla repartidor (usa 'contrasena' sin ñ)
+            ps = con.prepareStatement(
+                "SELECT pk_idRepartidor, NombreRepar, Correo, Usuario, contrasena, repTelefono, tipodevehi, numplaca, rol " +
+                "FROM repartidor WHERE LOWER(Correo)=? AND contrasena=?"
+            );
+            ps.setString(1, c);
+            ps.setString(2, k);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                u = new Usuario();
+                u.setId(rs.getInt("pk_idRepartidor"));
+                u.setNombre(rs.getString("NombreRepar"));
+                u.setUsuCorreo(rs.getString("Correo"));
+                u.setUsuario(rs.getString("Usuario"));
+                u.setClave(rs.getString("contrasena")); // aquí sin ñ
+                u.setUsuTelefono(rs.getString("repTelefono"));
+                u.setDireccion(rs.getString("tipodevehi"));
+                u.setBarrio(rs.getString("numplaca"));
+                u.setRol(rs.getString("rol"));
                 return u;
             }
 

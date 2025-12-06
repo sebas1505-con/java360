@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
 <h:head>
     <meta charset="UTF-8" />
@@ -17,46 +18,108 @@
         <h2>📝 Finalizar compra</h2>
 
         <h:form id="formCompra">
-            <label for="cantProducto">Cantidad de productos:</label>
-            <h:inputText id="cantProducto"
-                         value="#{ventaBean.cantProducto}"
-                         required="true"
-                         requiredMessage="La cantidad es obligatoria">
-                <f:convertNumber integerOnly="true" />
-                <f:validateLongRange minimum="1" />
-            </h:inputText>
+            <h:messages globalOnly="true" style="color:red; margin-bottom:10px"/>
 
-            <label for="metodoEnvio">Método de envío:</label>
-            <h:selectOneMenu id="metodoEnvio"
-                             value="#{ventaBean.metodoEnvio}"
-                             required="true">
-                <f:selectItem itemValue="domicilio" itemLabel="Domicilio" />
-            </h:selectOneMenu>
+            <table class="tabla-formulario">
+                <tr>
+                    <td><label for="cantProducto">Cantidad de productos:</label></td>
+                    <td>
+                        <h:inputText id="cantProducto"
+                                     value="#{ventaBean.cantProducto}"
+                                     required="true"
+                                     requiredMessage="La cantidad es obligatoria"
+                                     pt:placeholder="Ej: 2">
+                            <f:convertNumber integerOnly="true" />
+                            <f:validateLongRange minimum="1" />
+                        </h:inputText>
+                    </td>
+                </tr>
 
-            <label for="totalVenta">Total de la venta:</label>
-            <h:inputText id="totalVenta"
-                         value="#{ventaBean.totalVenta}"
-                         required="true"
-                         requiredMessage="El total es obligatorio">
-                <f:convertNumber />
-                <f:validateDoubleRange minimum="0.01" />
-            </h:inputText>
+                <tr>
+                    <td><label for="metodoEnvio">Método de envío:</label></td>
+                    <td>
+                        <h:selectOneMenu id="metodoEnvio"
+                                         value="#{ventaBean.metodoEnvio}"
+                                         required="true">
+                            <f:selectItem itemValue="" itemLabel="Seleccionar..." />
+                            <f:selectItem itemValue="domicilio" itemLabel="Domicilio" />
+                            <f:selectItem itemValue="inter" itemLabel="interrapidisimo" />
+                            <f:selectItem itemValue="express" itemLabel="Envío Express" />
+                        </h:selectOneMenu>
+                    </td>
+                </tr>
 
-            <label for="metodoPago">Método de pago:</label>
-            <h:selectOneMenu id="metodoPago"
-                             value="#{ventaBean.metodoPago}"
-                             required="true">
-                <f:selectItem itemValue="" itemLabel="Seleccionar..." />
-                <f:selectItem itemValue="efectivo" itemLabel="Efectivo" />
-                <f:selectItem itemValue="tarjeta" itemLabel="Tarjeta" />
-                <f:selectItem itemValue="transferencia" itemLabel="Transferencia" />
-            </h:selectOneMenu>
+                <tr>
+                    <td><label for="direccionEnvio">Dirección de envío:</label></td>
+                    <td>
+                        <h:inputText id="direccionEnvio"
+                                     value="#{ventaBean.direccionEnvio}"
+                                     required="true"
+                                     requiredMessage="La dirección es obligatoria"
+                                     pt:placeholder="Calle 123 #45-67, Bogotá"/>
+                    </td>
+                </tr>
 
-            <h:commandButton value="Confirmar compra"
-                             action="#{ventaBean.guardarVenta}" />
+                <tr>
+                    <td><label for="telefonoContacto">Teléfono de contacto:</label></td>
+                    <td>
+                        <h:inputText id="telefonoContacto"
+                                     value="#{ventaBean.telefonoContacto}"
+                                     required="true"
+                                     requiredMessage="El teléfono es obligatorio"
+                                     pt:placeholder="Ej: 3001234567"/>
+                    </td>
+                </tr>
 
+                <tr>
+                    <td><label for="totalVenta">Total de la venta:</label></td>
+                    <td>
+                        <h:inputText id="totalVenta"
+                                     value="#{ventaBean.totalVenta}"
+                                     required="true"
+                                     requiredMessage="El total es obligatorio"
+                                     pt:placeholder="Ej: 150000">
+                            <f:convertNumber />
+                            <f:validateDoubleRange minimum="0.01" />
+                        </h:inputText>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><label for="metodoPago">Método de pago:</label></td>
+                    <td>
+                        <h:selectOneMenu id="metodoPago"
+                                         value="#{ventaBean.metodoPago}"
+                                         required="true">
+                            <f:selectItem itemValue="" itemLabel="Seleccionar..." />
+                            <f:selectItem itemValue="efectivo" itemLabel="Efectivo" />
+                            <f:selectItem itemValue="tarjeta" itemLabel="Tarjeta" />
+                            <f:selectItem itemValue="transferencia" itemLabel="Transferencia" />
+                        </h:selectOneMenu>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><label for="observaciones">Observaciones:</label></td>
+                    <td>
+                        <h:inputTextarea id="observaciones"
+                                         value="#{ventaBean.observaciones}"
+                                         rows="3" cols="30"
+                                         pt:placeholder="Notas adicionales sobre la compra"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" style="text-align:center">
+                        <h:commandButton value="✅ Confirmar compra"
+                                         action="#{ventaBean.guardarVenta}"
+                                         styleClass="btn-confirmar"/>
+                    </td>
+                </tr>
+            </table>
         </h:form>
     </div>
+
     <a href="carrito.xhtml" class="btn-volver-home">Volver</a>
 
 </h:body>

@@ -29,36 +29,40 @@ public class LoginBean implements Serializable {
     public Usuario getUsuarioLogueado() { return usuarioLogueado; }
 
     // ------------------ INICIAR SESIÓN ------------------
-    public String iniciarSesion() {
-        try {
-            LoginDAO loginDao = new LoginDAO();
-            usuarioLogueado = loginDao.login(correo, clave);
+    // ------------------ INICIAR SESIÓN ------------------
+public String iniciarSesion() {
+    try {
+        LoginDAO loginDao = new LoginDAO();
+        usuarioLogueado = loginDao.login(correo, clave);
 
-            if (usuarioLogueado != null) {
-                HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                        .getExternalContext().getSession(true);
-                session.setAttribute("usuario", usuarioLogueado);
+        if (usuarioLogueado != null) {
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                    .getExternalContext().getSession(true);
+            session.setAttribute("usuario", usuarioLogueado);
 
-                // Redirigir según rol
-                if ("admin".equalsIgnoreCase(usuarioLogueado.getRol())) {
-                    return "/administrador.xhtml?faces-redirect=true";
-                } else {
-                    return "/usuario.xhtml?faces-redirect=true";
-                }
+            // Redirigir según rol
+            if ("admin".equalsIgnoreCase(usuarioLogueado.getRol())) {
+                return "admin?faces-redirect=true";
+            } else if ("usuario.".equalsIgnoreCase(usuarioLogueado.getRol())) {
+                return "usuario.?faces-redirect=true";
+            } else if ("repartidor".equalsIgnoreCase(usuarioLogueado.getRol())) {
+                return "Repartidor?faces-redirect=true";
             }
-
-            // Si no encontró nada
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Datos incorrectos"));
-            return null;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error", "Problema al iniciar sesión"));
-            return null;
         }
+
+        // Si no encontró nada
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Datos incorrectos"));
+        return "login";
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error", "Problema al iniciar sesión"));
+        return "login";
     }
+}
+
 
     // ------------------ CERRAR SESIÓN ------------------
     public String cerrarSesion() {
@@ -67,7 +71,7 @@ public class LoginBean implements Serializable {
 
         if (session != null) session.invalidate();
 
-        return "/login.xhtml?faces-redirect=true";
+        return "login?faces-redirect=true";
     }
 
     // ------------------ VERIFICAR SESIÓN ------------------
