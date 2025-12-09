@@ -1,6 +1,7 @@
 package beans;
 
 import dao.RepartidorDAO;
+import dao.VentaDAO;
 import modelo.Repartidor;
 import modelo.Venta; 
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class RepartidorBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    // Datos de registro/login
     private String nombre;
     private String correo;
     private String usuario;
@@ -25,10 +27,12 @@ public class RepartidorBean implements Serializable {
     private String telefono;
     private String vehiculo;
 
+    // Listas para el panel
     private List<Venta> ventasPendientes;
+    private List<Venta> historialEntregas;
 
     // -----------------------------
-    // GETTERS & SETTERS
+    // GETTERS & SETTERS (los tuyos + historial)
     // -----------------------------
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
@@ -50,8 +54,11 @@ public class RepartidorBean implements Serializable {
     public List<Venta> getVentasPendientes() { return ventasPendientes; }
     public void setVentasPendientes(List<Venta> ventasPendientes) { this.ventasPendientes = ventasPendientes; }
 
+    public List<Venta> getHistorialEntregas() { return historialEntregas; }
+    public void setHistorialEntregas(List<Venta> historialEntregas) { this.historialEntregas = historialEntregas; }
+
     // -----------------------------
-    // REGISTRAR REPARTIDOR
+    // REGISTRAR REPARTIDOR (tu método)
     // -----------------------------
     public String registrar() {
         try {
@@ -87,7 +94,7 @@ public class RepartidorBean implements Serializable {
     }
 
     // -----------------------------
-    // LOGIN
+    // LOGIN (tu método, añadiendo historial)
     // -----------------------------
     public String login() {
         try {
@@ -95,7 +102,11 @@ public class RepartidorBean implements Serializable {
             Repartidor r = dao.validarRepartidor(usuario, contrasena);
             if (r != null) {
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("repartidor", r);
+
+                // Cargar listas del panel
                 ventasPendientes = dao.listarPedidosPendientes();
+                historialEntregas = new VentaDAO().listarPorEstado("Entregado");
+
                 return "/panelRepartidor.xhtml?faces-redirect=true";
             } else {
                 FacesContext.getCurrentInstance().addMessage(null,
@@ -111,7 +122,7 @@ public class RepartidorBean implements Serializable {
     }
 
     // -----------------------------
-    // TOMAR PEDIDO
+    // TOMAR PEDIDO (tu método)
     // -----------------------------
     public void tomarPedido(int idVenta) {
         try {
@@ -119,7 +130,10 @@ public class RepartidorBean implements Serializable {
             dao.asignarPedido(usuario, idVenta);
             FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Pedido tomado correctamente"));
+
+            // Refrescar listas
             ventasPendientes = dao.listarPedidosPendientes();
+            historialEntregas = new VentaDAO().listarPorEstado("Entregado");
         } catch (Exception e) {
             e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
@@ -128,7 +142,33 @@ public class RepartidorBean implements Serializable {
     }
 
     // -----------------------------
-    // CERRAR SESIÓN
+    // NUEVO: Marcar pedido como entregado
+    // -----------------------------
+    public void marcarEntregado(int idVenta) {
+        try {
+            VentaDAO vdao = new VentaDAO();
+            boolean ok = vdao.actualizarEstado(idVenta, "Entregado");
+            if (ok) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Pedido #" + idVenta + " marcado como entregado"));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar el estado"));
+            }
+
+            // Refrescar listas
+            RepartidorDAO rdao = new RepartidorDAO();
+            ventasPendientes = rdao.listarPedidosPendientes();
+            historialEntregas = vdao.listarPorEstado("Entregado");
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error", "Problema al marcar como entregado"));
+        }
+    }
+
+    // -----------------------------
+    // CERRAR SESIÓN (tu método)
     // -----------------------------
     public String logout() {
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();

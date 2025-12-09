@@ -2,28 +2,29 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Panel Repartidor</title>
     <h:outputStylesheet library="css" name="repartidor.css"/>
 </h:head>
-<h:body>
-    <f:event type="preRenderView" listener="#{loginBean.verifSesionRepartidor}" />
 
-    <link rel="icon" type="image/png" href="#{resource['images/repar.png']}" />
+<h:body>
     <div class="header">
         <h1>Panel del Repartidor</h1>
     </div>
 
     <div class="container">
+
+        <!-- NAV -->
         <div class="card">
             <nav>
                 <h:link outcome="repartidor" value="Inicio" styleClass="btn" />
-                <h:link outcome="pedidosRepar" value="Pedidos Pendientes" styleClass="btn" />
-                <a class="btn" href="#">Historial de Entregas</a>
-
+                <h:link outcome="pedidosRepar" value="Entregas Pendientes" styleClass="btn" />
+                <h:commandLink value="Historial de Entregas" action="repartidor" styleClass="btn" />
                 <h:form style="display:inline;">
                     <h:commandButton value="Cerrar Sesión"
                                      action="#{repartidorBean.logout}"
@@ -31,15 +32,17 @@
                 </h:form>
             </nav>
         </div>
+
+        <!-- BIENVENIDA -->
         <div class="card">
-            <h2>Bienvenido, Repartidor</h2>
+            <h2>Bienvenido, #{repartidorBean.nombre}</h2>
             <p>Gestiona tus entregas de manera rápida y eficiente.</p>
         </div>
+
+        <!-- PEDIDOS PENDIENTES -->
         <div class="card">
             <h2>Pedidos Pendientes</h2>
-
-            <h:messages globalOnly="true"
-                        style="color: green; margin-bottom: 10px;" />
+            <h:messages globalOnly="true" style="color: green; margin-bottom: 10px;" />
 
             <table class="table">
                 <thead>
@@ -51,59 +54,80 @@
                         <th>Acción</th>
                     </tr>
                 </thead>
-
                 <tbody>
-
                     <ui:repeat value="#{repartidorBean.ventasPendientes}" var="venta">
-    <tr>
-        <td>#{venta.idVenta}</td>
-<td>#{venta.cliente.nombre}</td>
-<td>#{venta.cliente.direccion}</td>
-<td>#{venta.cliente.telefono}</td>
-
-
-        <td>
-            <h:form>
-                <h:commandButton value="Tomar Pedido"
-                                 action="#{repartidorBean.tomarPedido(venta.idVenta)}"
-                                 styleClass="btn" />
-            </h:form>
-        </td>
-    </tr>
-</ui:repeat>
-
+                        <tr>
+                            <td>#{venta.idVenta}</td>
+                            <td>#{venta.cliente.nombre}</td>
+                            <td>#{venta.cliente.direccion}</td>
+                            <td>#{venta.cliente.telefono}</td>
+                            <td>
+                                <h:form>
+                                    <h:commandButton value="Tomar Pedido"
+                                                     action="#{repartidorBean.tomarPedido(venta.idVenta)}"
+                                                     styleClass="btn" />
+                                    <h:commandButton value="Marcar Entregado"
+                                                     action="#{repartidorBean.marcarEntregado(venta.idVenta)}"
+                                                     styleClass="btn" />
+                                </h:form>
+                            </td>
+                        </tr>
+                    </ui:repeat>
                     <ui:fragment rendered="#{empty repartidorBean.ventasPendientes}">
                         <tr>
-                            <td colspan="5" style="text-align:center;">
-                                No hay pedidos pendientes.
-                            </td>
+                            <td colspan="5" style="text-align:center;">No hay pedidos pendientes.</td>
                         </tr>
                     </ui:fragment>
                 </tbody>
             </table>
         </div>
+
+        <!-- UBICACIÓN -->
         <section style="margin-top: 40px;">
             <h2 style="color: #e53935; text-align: center;">Ubicación de la Tienda</h2>
-
             <div style="display: flex; justify-content: center;">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.7523800795246!2d-74.08175488523878!3d4.609710143730961!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f99f7c9461e8d%3A0x52bb7c2eb6cbd540!2sPlaza%20de%20Bol%C3%ADvar%2C%20Bogot%C3%A1!5e0!3m2!1ses-419!2sco!4v1718735761536!5m2!1ses-419!2sco"
-                    height="300"
-                    loading="lazy"
-                    style="border:0;"
-                    allowfullscreen="">
+                    height="300" allowfullscreen="" loading="lazy"
+                    style="border:0;">
                 </iframe>
             </div>
         </section>
+
+        <!-- HISTORIAL DE ENTREGAS -->
         <div class="card">
             <h2>Historial de Entregas</h2>
-            <ul>
-                <li>Pedido #020 – Entregado el 15/06/2025</li>
-                <li>Pedido #019 – Entregado el 14/06/2025</li>
-            </ul>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID Pedido</th>
+                        <th>Cliente</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ui:repeat value="#{repartidorBean.historialEntregas}" var="venta">
+                        <tr>
+                            <td>#{venta.idVenta}</td>
+                            <td>#{venta.cliente.nombre}</td>
+                            <td>#{venta.cliente.direccion}</td>
+                            <td>#{venta.cliente.telefono}</td>
+                            <td>#{venta.fechaVenta}</td>
+                            <td>#{venta.estado}</td>
+                        </tr>
+                    </ui:repeat>
+                    <ui:fragment rendered="#{empty repartidorBean.historialEntregas}">
+                        <tr>
+                            <td colspan="6" style="text-align:center;">No hay entregas registradas.</td>
+                        </tr>
+                    </ui:fragment>
+                </tbody>
+            </table>
         </div>
+
     </div>
 </h:body>
 </html>
-
-
