@@ -14,67 +14,35 @@ public class VentaDAO {
 
     public VentaDAO() {
         try {
-            con = Conexion.conectar(); 
+            con = Conexion.conectar();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-public void registrarVenta(Venta venta) throws Exception {
+    public void registrarVenta(Venta venta) throws Exception {
     String sql = "INSERT INTO venta (fk_id_detalle_venta, cantProducto, metodoEnvio, totalVenta, metodo_de_pago, id_cliente, direccionEnvio, telefonoContacto, observaciones, Fecha_de_venta) "
                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
     PreparedStatement ps = con.prepareStatement(sql);
-    ps.setInt(1, venta.getIdDetalleVenta());
+    ps.setInt(1, venta.getIdDetalleVenta()); // si no tienes detalle, poner 0 o ajustar
     ps.setInt(2, venta.getCantProducto());
     ps.setString(3, venta.getMetodoEnvio());
     ps.setDouble(4, venta.getTotalVenta());
     ps.setString(5, venta.getMetodoPago());
-    ps.setInt(6, venta.getIdCliente());
+
+    // --- CORRECCIÓN: usar objeto Cliente ---
+    ps.setInt(6, venta.getCliente().getIdCliente());
+
     ps.setString(7, venta.getDireccionEnvio());
     ps.setString(8, venta.getTelefonoContacto());
     ps.setString(9, venta.getObservaciones());
     ps.executeUpdate();
+    ps.close();
 }
 
 
-    // Listar ventas
-    public List<Venta> listarVentas() throws Exception {
-        List<Venta> lista = new ArrayList<>();
-        String sql = "SELECT * FROM venta";
-        Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery(sql);
-
-        while (rs.next()) {
-    Venta v = new Venta();
-    v.setIdVenta(rs.getInt("pk_idVenta"));
-    v.setIdDetalleVenta(rs.getInt("fk_id_detalle_venta"));
-    v.setCantProducto(rs.getInt("cantProducto"));
-    v.setMetodoEnvio(rs.getString("metodoEnvio"));
-    v.setTotalVenta(rs.getDouble("totalVenta"));
-    v.setMetodoPago(rs.getString("metodo_de_pago"));
-    v.setIdCliente(rs.getInt("id_cliente"));
-    v.setDireccionEnvio(rs.getString("direccionEnvio"));
-    v.setTelefonoContacto(rs.getString("telefonoContacto"));
-    v.setObservaciones(rs.getString("observaciones"));
-    v.setFechaVenta(rs.getTimestamp("Fecha_de_venta"));
-    lista.add(v);
-}
-
-        return lista;
-    }
-
-    // Contar ventas
-    public int contarVentas() throws Exception {
-        String sql = "SELECT COUNT(*) FROM venta";
-        Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery(sql);
-        if (rs.next()) {
-            return rs.getInt(1);
-        }
-        return 0;
-    }
-
-    // Registrar (versión booleana)
+    // Registrar venta versión booleana
     public boolean registrar(Venta venta) {
         try {
             registrarVenta(venta);
@@ -85,20 +53,33 @@ public void registrarVenta(Venta venta) throws Exception {
         }
     }
 
-    public void asignarAPedido(int idPedido, String usuario) throws Exception {
-    String sql = "UPDATE pedido SET repartidorUsuario = ?, estado = ? WHERE idPedido = ?";
-    PreparedStatement ps = null;
-    try {
-        ps = con.prepareStatement(sql);
-        ps.setString(1, usuario);        // el usuario del repartidor
-        ps.setString(2, "EN_CURSO");     // nuevo estado del pedido
-        ps.setInt(3, idPedido);          // id del pedido
-        ps.executeUpdate();
-    } finally {
-        if (ps != null) ps.close();
- 
+    // Listar todas las ventas
+    public List<Venta> listarVentas() throws Exception {
+        List<Venta> lista = new ArrayList<>();
+        String sql = "SELECT * FROM venta";
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
+        while (rs.next()) {
+            Venta v = new Venta();
+            v.setIdVenta(rs.getInt("pk_idVenta"));
+            v.setIdDetalleVenta(rs.getInt("fk_id_detalle_venta"));
+            v.setCantProducto(rs.getInt("cantProducto"));
+            v.setMetodoEnvio(rs.getString("metodoEnvio"));
+            v.setTotalVenta(rs.getDouble("totalVenta"));
+            v.setMetodoPago(rs.getString("metodo_de_pago"));
+            v.setIdCliente(rs.getInt("idCliente"));
+            v.setDireccionEnvio(rs.getString("direccionEnvio"));
+            v.setTelefonoContacto(rs.getString("telefonoContacto"));
+            v.setObservaciones(rs.getString("observaciones"));
+            v.setEstado(rs.getString("estado"));
+            v.setFechaVenta(rs.getTimestamp("Fecha_de_venta"));
+            lista.add(v);
+        }
+
+        rs.close();
+        st.close();
+        return lista;
     }
 
-    }
-    
 }

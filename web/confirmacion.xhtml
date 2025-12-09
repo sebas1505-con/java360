@@ -5,44 +5,138 @@
 <h:head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Ícono -->
     <link rel="icon" type="image/x-icon" href="#{resource['images/usu.png']}" />
-    <h:outputStylesheet library="css" name="confirmacion.css" />
-    <title>Deportes 360</title>
+
+    <!-- Google Fonts – corregido &amp; -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&amp;display=swap" 
+          rel="stylesheet"/>
+
+    <title>Confirmación de Compra</title>
+
+    <!-- ESTILOS INTERNOS -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #4b79a1, #283e51);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .confirmacion-container {
+            background: #ffffff;
+            width: 450px;
+            padding: 30px 35px;
+            border-radius: 12px;
+            text-align: left;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            animation: fadeIn 0.6s ease;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2d7dd2;
+            font-weight: 600;
+        }
+
+        .confirmacion-grid {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .confirmacion-grid td {
+            padding: 6px 0;
+            font-size: 15px;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .value {
+            color: #444;
+        }
+
+        .btn-volver {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #2d7dd2;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-volver:hover {
+            background: #2262a0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </h:head>
 
 <h:body>
+
     <div class="confirmacion-container">
-        <h2>✅ Compra registrada con éxito</h2>
 
-        <h:panelGrid columns="2" styleClass="confirmacion-grid">
-            <h:outputText value="Cantidad:" />
-            <h:outputText value="#{ventaBean.cantProducto}" />
+        <h2>✔ Compra Registrada</h2>
 
-            <h:outputText value="Método de envío:" />
-            <h:outputText value="#{ventaBean.metodoEnvio}" />
+        <table class="confirmacion-grid">
+            <tr>
+                <td class="label">Cantidad:</td>
+                <td class="value"><h:outputText value="#{ventaBean.cantProducto}" /></td>
+            </tr>
 
-            <h:outputText value="Dirección:" />
-            <h:outputText value="#{ventaBean.direccionEnvio}" />
+            <tr>
+                <td class="label">Método de Envío:</td>
+                <td class="value"><h:outputText value="#{ventaBean.metodoEnvio}" /></td>
+            </tr>
 
-            <h:outputText value="Teléfono:" />
-            <h:outputText value="#{ventaBean.telefonoContacto}" />
+            <tr>
+                <td class="label">Dirección:</td>
+                <td class="value"><h:outputText value="#{ventaBean.direccionEnvio}" /></td>
+            </tr>
 
-            <h:outputText value="Método de pago:" />
-            <h:outputText value="#{ventaBean.metodoPago}" />
+            <tr>
+                <td class="label">Teléfono:</td>
+                <td class="value"><h:outputText value="#{ventaBean.telefonoContacto}" /></td>
+            </tr>
 
-            <h:outputText value="Total:" />
-            <h:outputText value="#{ventaBean.totalVenta}" />
+            <tr>
+                <td class="label">Método de Pago:</td>
+                <td class="value"><h:outputText value="#{ventaBean.metodoPago}" /></td>
+            </tr>
 
-            <h:outputText value="Observaciones:" />
-            <h:outputText value="#{ventaBean.observaciones}" />
-        </h:panelGrid>
+            <tr>
+                <td class="label">Total:</td>
+                <td class="value"><h:outputText value="#{ventaBean.totalVenta}" /></td>
+            </tr>
 
-        <!-- Botón para volver a la vista usuario -->
+            <tr>
+                <td class="label">Observaciones:</td>
+                <td class="value"><h:outputText value="#{ventaBean.observaciones}" /></td>
+            </tr>
+        </table>
+
+        <!-- Botón volver -->
         <h:form>
             <h:commandButton value="⬅ Volver a Usuario"
                              action="/usuario.xhtml?faces-redirect=true"
                              styleClass="btn-volver"/>
         </h:form>
     </div>
+
 </h:body>
 </html>

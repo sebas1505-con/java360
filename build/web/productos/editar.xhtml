@@ -11,72 +11,108 @@
           rel="stylesheet" />
 </h:head>
 
-<h:body>
-    <div class="container">
-        <h2 class="text-primary">Editar Producto</h2>
+<h:body class="bg-light">
 
+    <div class="container mt-4 p-4 bg-white shadow rounded">
+
+        <h2 class="text-primary mb-4">Editar Producto</h2>
+
+        <!-- FORMULARIO ÚNICO -->
         <h:form enctype="multipart/form-data">
-            <h:inputHidden value="#{productoBean.producto.id}" />
 
-            <h:panelGrid columns="3">
+            <h:inputHidden value="#{productoBean.producto.cod}" />
 
-                <h:outputLabel for="cod" value="Código:" />
-                <h:inputText id="cod" value="#{productoBean.producto.cod}" 
-                             required="true" requiredMessage="Debe especificar un Código"
-                             styleClass="form-control" />
-                <h:message for="cod" styleClass="text-danger" />
+            <div class="row g-3">
 
-                <h:outputLabel for="nom" value="Nombre:" />
-                <h:inputText id="nom" value="#{productoBean.producto.nombre}" 
-                             required="true" requiredMessage="Debe especificar un Nombre"
-                             styleClass="form-control" />
-                <h:message for="nom" styleClass="text-danger" />
-
-                <h:outputLabel for="des" value="Descripción:" />
-                <h:inputTextarea id="des" value="#{productoBean.producto.descr}" 
-                                 required="true" requiredMessage="Debe especificar una Descripción"
+                <!-- Código -->
+                <div class="col-md-4">
+                    <label class="form-label">Código:</label>
+                    <h:inputText id="cod" value="#{productoBean.producto.cod}"
+                                 required="true" requiredMessage="Debe especificar un Código"
                                  styleClass="form-control" />
-                <h:message for="des" styleClass="text-danger" />
+                    <h:message for="cod" styleClass="text-danger small" />
+                </div>
 
-                <h:outputLabel for="ext" value="Existencias:" />
-                <h:inputText id="ext" value="#{productoBean.producto.exist}" 
-                             required="true" requiredMessage="Debe especificar una Cantidad"
-                             styleClass="form-control" />
-                <h:message for="ext" styleClass="text-danger" />
+                <!-- Nombre -->
+                <div class="col-md-4">
+                    <label class="form-label">Nombre:</label>
+                    <h:inputText id="nom" value="#{productoBean.producto.nombre}"
+                                 required="true" requiredMessage="Debe especificar un Nombre"
+                                 styleClass="form-control" />
+                    <h:message for="nom" styleClass="text-danger small" />
+                </div>
 
-                <h:outputLabel for="pre" value="Precio:" />
-                <h:inputText id="pre" value="#{productoBean.producto.precio}" 
-                             required="true" requiredMessage="Debe especificar un Precio"
-                             styleClass="form-control" />
-                <h:message for="pre" styleClass="text-danger" />
+                <!-- Precio -->
+                <div class="col-md-4">
+                    <label class="form-label">Precio:</label>
+                    <h:inputText id="pre" value="#{productoBean.producto.precio}"
+                                 required="true" requiredMessage="Debe especificar un Precio"
+                                 styleClass="form-control" />
+                    <h:message for="pre" styleClass="text-danger small" />
+                </div>
 
-                <h:outputLabel for="fev" value="Fecha Vence:" />
-                <h:inputText id="fev" value="#{productoBean.producto.fven}" 
-                             required="true" requiredMessage="Debe especificar una Fecha"
-                             styleClass="form-control">
-                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                </h:inputText>
-                <h:message for="fev" styleClass="text-danger" />
+                <!-- Descripción -->
+                <div class="col-12">
+                    <label class="form-label">Descripción:</label>
+                    <h:inputTextarea id="des" value="#{productoBean.producto.descr}"
+                                     required="true" requiredMessage="Debe especificar una Descripción"
+                                     styleClass="form-control" rows="3" />
+                    <h:message for="des" styleClass="text-danger small" />
+                </div>
 
-                <h:column />
-                <img src="#{productoBean.producto.foto}" height="80" />
-                <h:column />
+                <!-- Existencias -->
+                <div class="col-md-6">
+                    <label class="form-label">Existencias:</label>
+                    <h:inputText id="ext" value="#{productoBean.producto.exist}"
+                                 required="true" requiredMessage="Debe especificar la Cantidad"
+                                 styleClass="form-control" />
+                    <h:message for="ext" styleClass="text-danger small" />
+                </div>
 
-                <h:outputLabel for="img" value="Imagen:" />
-                <h:inputFile id="img" value="#{productoBean.imagen}" styleClass="form-control" />
-                <h:message for="img" styleClass="text-danger" />
+                <!-- Fecha vence -->
+                <div class="col-md-6">
+                    <label class="form-label">Fecha de Vencimiento:</label>
+                    <h:inputText id="fev" value="#{productoBean.producto.fven}"
+                                 required="true" requiredMessage="Debe especificar una Fecha"
+                                 styleClass="form-control">
+                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                    </h:inputText>
+                    <h:message for="fev" styleClass="text-danger small" />
+                </div>
 
-                <h:column />
-                <h:column>
-                    <h:commandButton value="Actualizar" actionListener="#{productoBean.actualizar}" 
-                                     action="index" styleClass="btn btn-success" />
-                    <h:commandButton value="Cancelar" immediate="true" action="index" 
-                                     styleClass="btn btn-secondary" style="margin-left: 15px;" />
-                </h:column>
-                <h:column />
+                <!-- Imagen actual -->
+                <div class="col-md-4">
+                    <label class="form-label d-block">Imagen Actual:</label>
+                    <img src="#{productoBean.producto.foto}"
+                         class="img-thumbnail shadow-sm"
+                         style="width: 120px; height: auto; border-radius: 6px;" />
+                </div>
 
-            </h:panelGrid>
+                <!-- Nueva imagen -->
+                <div class="col-md-8">
+                    <label class="form-label">Nueva Imagen:</label>
+                    <h:inputFile id="img" value="#{productoBean.imagen}"
+                                 styleClass="form-control" />
+                    <h:message for="img" styleClass="text-danger small" />
+                </div>
+
+            </div>
+
+            <!-- BOTONES -->
+            <div class="mt-4 text-end">
+                <h:commandButton value="Actualizar"
+                                 action="#{productoBean.actualizar}"
+                                 styleClass="btn btn-success me-2" />
+
+                <h:commandButton value="Volver"
+                                 action="admin?faces-redirect=true"
+                                 immediate="true"
+                                 styleClass="btn btn-secondary" />
+            </div>
+
         </h:form>
+
     </div>
+
 </h:body>
 </html>

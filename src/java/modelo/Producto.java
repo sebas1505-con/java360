@@ -9,8 +9,12 @@ public class Producto {
     private int exist;
     private double precio;
     private Date fven;
+    private String foto;
 
-    // Getters y setters
+public String getFoto() { return foto; }
+
+public void setFoto(String foto) { this.foto = foto; }
+
     public String getCod() { return cod; }
     public void setCod(String cod) { this.cod = cod; }
 

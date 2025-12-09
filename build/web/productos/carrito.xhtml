@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
     <meta charset="UTF-8"/>
@@ -13,10 +14,12 @@
 </h:head>
 
 <h:body>
-    <!-- HEADER -->
+
+    <!-- Verificación de sesión CORREGIDA -->
+    <f:event type="preRenderView" listener="#{loginBean.verifSesionUsuario}" />
+
     <header class="header">
         <div class="container menu">
-
             <a href="usuario.xhtml" class="logo">Deportes 360</a>
 
             <nav class="navbar">
@@ -41,7 +44,6 @@
 
                     <div class="item-left">
 
-                        <!-- IMAGEN -->
                         <h:graphicImage library="images" name="#{p.imagen}" width="90" height="90" style="border-radius:10px;"/>
 
                         <div class="item-info">
@@ -52,7 +54,6 @@
 
                     </div>
 
-                    <!-- BOTÓN ELIMINAR -->
                     <h:commandButton 
                         value="Eliminar" 
                         styleClass="btn-eliminar"
@@ -62,7 +63,6 @@
 
             </ui:repeat>
 
-            <!-- SI ESTÁ VACÍO -->
             <h:panelGroup rendered="#{empty carritoBean.productos}">
                 <p class="vacio">Tu carrito está vacío.</p>
             </h:panelGroup>
@@ -76,11 +76,11 @@
                 </h3>
 
                 <div class="acciones">
-                    
                     <a href="catalogo.xhtml" class="btn-finalizar">Seguir comprando</a>
                     <a href="/errors/PaginaNo.xhtml" class="btn-finalizar">¿Tienes un cupón?</a>
                     <a href="usuario.xhtml" class="btn-finalizar">Volver</a>
                     <a href="formulario.xhtml" class="btn-finalizar">Finalizar compra</a>
+
                     <h:commandButton 
                         value="Vaciar carrito" 
                         action="#{carritoBean.vaciar}"

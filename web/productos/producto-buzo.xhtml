@@ -15,26 +15,29 @@
 <header class="header">
     <div class="container menu">
         <a href="#" class="logo">DEPORTES 360</a>
-        <nav class="navbar">
-            <ul>
-                <li><h:link outcome="/usuario" value="Inicio"/></li>
-                <li><h:link outcome="catalogo" value="Catálogo"/></li>
-                <li><h:link outcome="contacto1" value="Contacto"/></li>
-                <li><h:link outcome="carrito" value="Carrito (#{CarritoBean.cantidadProductos})"/></li>
-            </ul>
-        </nav>
+       <nav class="navbar">
+    <ul>
+        <li><h:link outcome="/usuario" value="Inicio"/></li>
+        <li><h:link outcome="catalogo" value="Volver" styleClass="btn-1"/></li>
+        <li><h:link outcome="contacto1" value="Contacto"/></li>
+
+        <!-- Carrito correcto -->
+        <li><h:link outcome="carrito" value="Carrito (#{carritoBean.cantidadProductos})"/></li>
+    </ul>
+</nav>
+
     </div>
 </header>
 
 <main class="container">
-    <!-- MENSAJES DE ÉXITO/ERROR -->
+    
     <h:messages styleClass="mensajes" globalOnly="true" 
                 infoClass="mensaje-info" 
                 warnClass="mensaje-warn" 
                 errorClass="mensaje-error"/>
     
     <div class="producto-detalle">
-        <!-- Galería -->
+        
         <div class="producto-galeria">
             <div class="imagen-principal">
                 <h:graphicImage library="images" name="buzo-hombre.png" id="imagen-principal" 
@@ -42,7 +45,6 @@
             </div>
         </div>
         
-        <!-- Información del Producto -->
         <div class="producto-info">
             <h2>Buzo Hombre Deportivo</h2>
             <p>
@@ -64,8 +66,8 @@
                 <span>🛡️ Garantía oficial</span>
             </div>
             
-            <!-- FORMULARIO DE COMPRA -->
             <h:form id="formCompra">
+                
                 <div style="margin-top: 20px;">
                     <label for="talla"><strong>Selecciona tu talla:</strong></label>
                     <h:selectOneMenu id="talla" value="#{carritoBean.tallaSeleccionada}" 
@@ -79,9 +81,10 @@
                     </h:selectOneMenu>
                 </div>
                 
-                
                 <div style="margin-top: 20px;">
                     <h:link outcome="catalogo" value="Volver" styleClass="btn-1"/>
+
+                    <!-- BOTÓN FUNCIONAL Y CORRECTO -->
                     <h:commandButton value="Agregar al Carrito"
                                      styleClass="btn-1"
                                      action="#{carritoBean.agregarProducto('Buzo Hombre', 75000, 'buzo-hombre.png')}"/>
@@ -92,7 +95,6 @@
     </div>
 </main>
 
-<!-- JavaScript para cambiar imagen (si tienes múltiples imágenes) -->
 <script type="text/javascript">
     function cambiarImagen(url) {
         var img = document.getElementById("imagen-principal");

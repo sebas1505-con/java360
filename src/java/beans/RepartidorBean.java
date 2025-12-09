@@ -16,7 +16,6 @@ import java.util.List;
 public class RepartidorBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    // --- PROPIEDADES DEL FORMULARIO ---
     private String nombre;
     private String correo;
     private String usuario;
@@ -25,43 +24,35 @@ public class RepartidorBean implements Serializable {
     private String placa;
     private String telefono;
     private String vehiculo;
-    private String fecha; // opcional
 
-    // --- LISTA DE PEDIDOS ---
     private List<Venta> ventasPendientes;
 
-    // --- GETTERS & SETTERS ---
+    // -----------------------------
+    // GETTERS & SETTERS
+    // -----------------------------
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
-
     public String getCorreo() { return correo; }
     public void setCorreo(String correo) { this.correo = correo; }
-
     public String getUsuario() { return usuario; }
     public void setUsuario(String usuario) { this.usuario = usuario; }
-
     public String getContrasena() { return contrasena; }
     public void setContrasena(String contrasena) { this.contrasena = contrasena; }
-
     public String getContrasenaConfirmacion() { return contrasenaConfirmacion; }
     public void setContrasenaConfirmacion(String contrasenaConfirmacion) { this.contrasenaConfirmacion = contrasenaConfirmacion; }
-
     public String getPlaca() { return placa; }
     public void setPlaca(String placa) { this.placa = placa; }
-
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
-
     public String getVehiculo() { return vehiculo; }
     public void setVehiculo(String vehiculo) { this.vehiculo = vehiculo; }
-
-    public String getFecha() { return fecha; }
-    public void setFecha(String fecha) { this.fecha = fecha; }
 
     public List<Venta> getVentasPendientes() { return ventasPendientes; }
     public void setVentasPendientes(List<Venta> ventasPendientes) { this.ventasPendientes = ventasPendientes; }
 
-    // --- MÉTODO PARA REGISTRAR ---
+    // -----------------------------
+    // REGISTRAR REPARTIDOR
+    // -----------------------------
     public String registrar() {
         try {
             if (contrasena == null || !contrasena.equals(contrasenaConfirmacion)) {
@@ -95,14 +86,15 @@ public class RepartidorBean implements Serializable {
         }
     }
 
-    // --- MÉTODO PARA LOGIN ---
+    // -----------------------------
+    // LOGIN
+    // -----------------------------
     public String login() {
         try {
             RepartidorDAO dao = new RepartidorDAO();
             Repartidor r = dao.validarRepartidor(usuario, contrasena);
             if (r != null) {
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("repartidor", r);
-                // cargar pedidos pendientes al iniciar sesión
                 ventasPendientes = dao.listarPedidosPendientes();
                 return "/panelRepartidor.xhtml?faces-redirect=true";
             } else {
@@ -118,14 +110,15 @@ public class RepartidorBean implements Serializable {
         }
     }
 
-    // --- MÉTODO PARA TOMAR PEDIDO ---
+    // -----------------------------
+    // TOMAR PEDIDO
+    // -----------------------------
     public void tomarPedido(int idVenta) {
         try {
             RepartidorDAO dao = new RepartidorDAO();
             dao.asignarPedido(usuario, idVenta);
             FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Pedido tomado correctamente"));
-            // refrescar lista
             ventasPendientes = dao.listarPedidosPendientes();
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,7 +127,9 @@ public class RepartidorBean implements Serializable {
         }
     }
 
-    // --- MÉTODO PARA CERRAR SESIÓN ---
+    // -----------------------------
+    // CERRAR SESIÓN
+    // -----------------------------
     public String logout() {
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         return "/login.xhtml?faces-redirect=true";

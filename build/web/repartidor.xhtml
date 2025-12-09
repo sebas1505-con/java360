@@ -21,7 +21,7 @@
         <div class="card">
             <nav>
                 <h:link outcome="repartidor" value="Inicio" styleClass="btn" />
-                <h:link outcome="pedidos" value="Pedidos Pendientes" styleClass="btn" />
+                <h:link outcome="pedidosRepar" value="Pedidos Pendientes" styleClass="btn" />
                 <a class="btn" href="#">Historial de Entregas</a>
 
                 <h:form style="display:inline;">
@@ -55,21 +55,23 @@
                 <tbody>
 
                     <ui:repeat value="#{repartidorBean.ventasPendientes}" var="venta">
-                        <tr>
-                            <td>#{venta.id}</td>
-                            <td>#{venta.cliente.nombre}</td>
-                            <td>#{venta.cliente.direccion}</td>
-                            <td>#{venta.cliente.telefono}</td>
+    <tr>
+        <td>#{venta.idVenta}</td>
+<td>#{venta.cliente.nombre}</td>
+<td>#{venta.cliente.direccion}</td>
+<td>#{venta.cliente.telefono}</td>
 
-                            <td>
-                                <h:form>
-                                    <h:commandButton value="Tomar Pedido"
-                                                     action="#{repartidorBean.tomarPedido(venta.id)}"
-                                                     styleClass="btn" />
-                                </h:form>
-                            </td>
-                        </tr>
-                    </ui:repeat>
+
+        <td>
+            <h:form>
+                <h:commandButton value="Tomar Pedido"
+                                 action="#{repartidorBean.tomarPedido(venta.idVenta)}"
+                                 styleClass="btn" />
+            </h:form>
+        </td>
+    </tr>
+</ui:repeat>
+
                     <ui:fragment rendered="#{empty repartidorBean.ventasPendientes}">
                         <tr>
                             <td colspan="5" style="text-align:center;">

@@ -3,6 +3,7 @@ package modelo;
 import java.util.Date;
 
 public class Venta {
+
     private int idVenta;
     private int idDetalleVenta;
     private int cantProducto;
@@ -15,10 +16,11 @@ public class Venta {
     private String telefonoContacto;
     private String observaciones;
 
-    // Relación con Cliente
+    private String estado;
     private Cliente cliente;
 
-    // --- GETTERS & SETTERS ---
+    // -------- GETTERS & SETTERS ---------
+
     public int getIdVenta() { return idVenta; }
     public void setIdVenta(int idVenta) { this.idVenta = idVenta; }
 
@@ -52,12 +54,14 @@ public class Venta {
     public String getObservaciones() { return observaciones; }
     public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
 
-    // --- Cliente asociado ---
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    public void setId(int id) {
-    this.idVenta = id;
-}
+    // -------- ESTADO --------
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
+    public void setId(int id) {
+        this.idVenta = id;
+    }
 }

@@ -10,6 +10,7 @@ import modelo.Repartidor;
 import modelo.Venta;
 
 public class RepartidorDAO {
+    
     private Connection con;
 
     public RepartidorDAO() {
@@ -20,116 +21,97 @@ public class RepartidorDAO {
         }
     }
 
-    // Registrar repartidor
+    // ================================
+    // REGISTRAR REPARTIDOR
+    // ================================
     public void registrarRepartidor(Repartidor r) throws Exception {
         String sql = "INSERT INTO repartidor (repTelefono, tipodevehi, numplaca, NombreRepar, Correo, Usuario, contrasena, rol) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement ps = null;
-        try {
-            ps = con.prepareStatement(sql);
-            ps.setString(1, r.getRepTelefono());
-            ps.setString(2, r.getTipoDeVehi());
-            ps.setString(3, r.getNumPlaca());
-            ps.setString(4, r.getNombreRepar());
-            ps.setString(5, r.getCorreo());
-            ps.setString(6, r.getUsuario());
-            ps.setString(7, r.getContrasena());
-            ps.setString(8, "repartidor"); 
-            ps.executeUpdate();
-        } finally {
-            if (ps != null) ps.close();
-        }
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, r.getRepTelefono());
+        ps.setString(2, r.getTipoDeVehi());
+        ps.setString(3, r.getNumPlaca());
+        ps.setString(4, r.getNombreRepar());
+        ps.setString(5, r.getCorreo());
+        ps.setString(6, r.getUsuario());
+        ps.setString(7, r.getContrasena());
+        ps.setString(8, "repartidor");
+        ps.executeUpdate();
+        ps.close();
     }
 
-    // Listar repartidores
-    public List<Repartidor> listarRepartidores() throws Exception {
-        List<Repartidor> lista = new ArrayList<>();
-        String sql = "SELECT * FROM repartidor";
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Repartidor r = new Repartidor();
-                r.setIdRepartidor(rs.getInt("pk_idRepartidor"));
-                r.setRepTelefono(rs.getString("repTelefono"));
-                r.setTipoDeVehi(rs.getString("tipodevehi"));
-                r.setNumPlaca(rs.getString("numplaca"));
-                r.setNombreRepar(rs.getString("NombreRepar"));
-                r.setCorreo(rs.getString("Correo"));
-                r.setUsuario(rs.getString("Usuario"));
-                r.setContrasena(rs.getString("contrasena"));
-                r.setRol(rs.getString("rol")); // nuevo campo
-                lista.add(r);
-            }
-        } finally {
-            if (rs != null) rs.close();
-            if (ps != null) ps.close();
-        }
-        return lista;
-    }
-    
+    // ================================
+    // VALIDAR LOGIN DEL REPARTIDOR
+    // ================================
     public Repartidor validarRepartidor(String usuario, String contrasena) throws Exception {
-    String sql = "SELECT * FROM repartidor WHERE Usuario=? AND contrasena=?"; // usa el nombre real
-    PreparedStatement ps = con.prepareStatement(sql);
-    ps.setString(1, usuario);
-    ps.setString(2, contrasena);
-    ResultSet rs = ps.executeQuery();
-    if (rs.next()) {
-        Repartidor r = new Repartidor();
-        r.setIdRepartidor(rs.getInt("pk_idRepartidor"));
-        r.setUsuario(rs.getString("Usuario"));
-        r.setContrasena(rs.getString("contrasena")); // columna correcta
-        r.setRol(rs.getString("rol"));
-        return r;
-    }
-    return null;
+        String sql = "SELECT * FROM repartidor WHERE Usuario=? AND contrasena=?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, usuario);
+        ps.setString(2, contrasena);
 
-}
-public List<Venta> listarPedidosPendientes() throws Exception {
-    List<Venta> lista = new ArrayList<>();
-    String sql = "SELECT v.idVenta, c.nombre, c.direccion, c.telefono " +
-                 "FROM venta v " +
-                 "JOIN cliente c ON v.cliente_id = c.idCliente " +
-                 "WHERE v.estado = 'PENDIENTE'";
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-    try {
-        ps = con.prepareStatement(sql);
-        rs = ps.executeQuery();
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Repartidor r = new Repartidor();
+            r.setIdRepartidor(rs.getInt("pk_idRepartidor"));
+            r.setUsuario(rs.getString("Usuario"));
+            r.setContrasena(rs.getString("contrasena"));
+            r.setRol(rs.getString("rol"));
+            rs.close();
+            ps.close();
+            return r;
+        }
+
+        rs.close();
+        ps.close();
+        return null;
+    }
+
+    // ================================
+    // LISTAR PEDIDOS PENDIENTES
+    // ================================
+    public List<Venta> listarPedidosPendientes() throws Exception {
+        List<Venta> lista = new ArrayList<>();
+
+        String sql = "SELECT v.pk_idVenta, v.direccionEnvio, v.telefonoContacto, "
+                   + "c.idCliente, c.nombre, c.direccion, c.telefono "
+                   + "FROM venta v "
+                   + "JOIN cliente c ON v.idCliente = c.idCliente "
+                   + "WHERE v.estado = 'Pendiente'";
+
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
         while (rs.next()) {
             Venta v = new Venta();
-            v.setIdVenta(rs.getInt("idVenta")); // usa el nombre real de la columna
+            v.setIdVenta(rs.getInt("pk_idVenta"));
+            v.setDireccionEnvio(rs.getString("direccionEnvio"));
+            v.setTelefonoContacto(rs.getString("telefonoContacto"));
 
             Cliente c = new Cliente();
+            c.setIdCliente(rs.getInt("id_cliente"));
             c.setNombre(rs.getString("nombre"));
             c.setDireccion(rs.getString("direccion"));
             c.setTelefono(rs.getString("telefono"));
+
             v.setCliente(c);
 
             lista.add(v);
         }
-    } finally {
-        if (rs != null) rs.close();
-        if (ps != null) ps.close();
+
+        rs.close();
+        ps.close();
+        return lista;
     }
-    return lista;
-}
 
-
-public void asignarPedido(String usuarioRepartidor, int idVenta) throws Exception {
-    String sql = "UPDATE venta SET repartidor=?, estado='ASIGNADO' WHERE id=?";
-    PreparedStatement ps = null;
-    try {
-        ps = con.prepareStatement(sql);
+    // ================================
+    // ASIGNAR PEDIDO A REPARTIDOR
+    // ================================
+    public void asignarPedido(String usuarioRepartidor, int idVenta) throws Exception {
+        String sql = "UPDATE venta SET repartidor=?, estado='ASIGNADO' WHERE pk_idVenta=?";
+        PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, usuarioRepartidor);
         ps.setInt(2, idVenta);
         ps.executeUpdate();
-    } finally {
-        if (ps != null) ps.close();
+        ps.close();
     }
-}
-
 }
